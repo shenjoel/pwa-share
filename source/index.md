@@ -254,6 +254,6 @@ self.addEventListener('fetch', function(e) {
 :::
 
 :::note
-<p style="text-shadow: none; color: black">可以看到, 我们在 install 的监听函数中，利用caches api 缓存资源列表. 接下来当用户再次</p>
+<p style="text-shadow: none; color: black">可以看到, 我们在 install 的监听函数中，利用caches api 缓存资源列表. 接下来当用户再次访问时，fetch 事件会拦截当前页面请求, 如果cache能匹配上当前路径，会优先返回缓存内容，如果没匹配上会从服务拉取数据</p>
 :::
 
