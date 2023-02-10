@@ -170,40 +170,51 @@ graph TD
 
 
 <slide class="fullscreen bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
+:::header
+### Service Worker - lifecycle
+:::
 
 :::column
-<img style="display: block;" src="./img/sw-lifecycle.png">
+!![](./img/sw-lifecycle.png)
 
 ---
 
-## 执行过程
+:::{.fadeInRight}
+- 1、在主线程成功注册 Service Worker 之后，开始下载并解析执行 Service Worker 文件，执行过程中开始安装 Service Worker，在此过程中会触发 worker 线程的 install 事件。{.bg-primary}
 
-在主线程成功注册 Service Worker 之后，开始下载并解析执行 Service Worker 文件，执行过程中开始安装 Service Worker，在此过程中会触发 worker 线程的 install 事件。
+- 2、如果 install 事件回调成功执行（在 install 回调中通常会做一些缓存读写的工作，可能会存在失败的情况），则开始激活 Service Worker，在此过程中会触发 worker 线程的 - activate 事件，如果 install 事件回调执行失败，则生命周期进入 Error 终结状态，终止生命周期。{.bg-primary}
 
-如果 install 事件回调成功执行（在 install 回调中通常会做一些缓存读写的工作，可能会存在失败的情况），则开始激活 Service Worker，在此过程中会触发 worker 线程的 - activate 事件，如果 install 事件回调执行失败，则生命周期进入 Error 终结状态，终止生命周期。
+- 3、完成激活之后，Service Worker 就能够控制作用域下的页面的资源请求，可以监听 fetch 事件。{.bg-primary}
 
-完成激活之后，Service Worker 就能够控制作用域下的页面的资源请求，可以监听 fetch 事件。
-
-如果在激活后 Service Worker 被 unregister 或者有新的 Service Worker 版本更新，则当前 Service Worker 生命周期完结，进入 Terminated 终结状态。
+- 4、如果在激活后 Service Worker 被 unregister 或者有新的 Service Worker 版本更新，则当前 Service Worker 生命周期完结，进入 Terminated 终结状态。{.bg-primary}
+{.build}
+:::
 
 :::
 
-:::footer{.build.fadeInRight}
+:::{.build.fadeInRight.aligncenter}
 #### `通过 Service Worker 让 PWA...?`
 :::
 
 :::note
+<p style="text-shadow: none; color: black">1、在主线程成功注册 Service Worker 之后，开始下载并解析执行 Service Worker 文件，执行过程中开始安装 Service Worker，在此过程中会触发 worker 线程的 install 事件。</p>
+
+<p style="text-shadow: none; color: black">2、如果 install 事件回调成功执行（在 install 回调中通常会做一些缓存读写的工作，可能会存在失败的情况），则开始激活 Service Worker，在此过程中会触发 worker 线程的 - activate 事件，如果 install 事件回调执行失败，则生命周期进入 Error 终结状态，终止生命周期。</p>
+
+<p style="text-shadow: none; color: black">3、完成激活之后，Service Worker 就能够控制作用域下的页面的资源请求，可以监听 fetch 事件。</p>
+
+<p style="text-shadow: none; color: black">4、如果在激活后 Service Worker 被 unregister 或者有新的 Service Worker 版本更新，则当前 Service Worker 生命周期完结，进入 Terminated 终结状态。</p>
+
 <p style="text-shadow: none; color: black">通过 Service Worker 让 PWA...?</p>
 :::
 
 
 <slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
 :::header{.alignright}
-### 通过 Service Worker 让 PWA - 缓存资源
+### Service Worker - 预缓存资源
 :::
 
 :::column
-
 #### 在安装过程中缓存资源
 ```mermaid
 graph TD
@@ -212,21 +223,14 @@ graph TD
 
 ---
 
+<div style="height: 800px; overflow: auto;">
+
 ```js
 // 缓存的key
 const cacheName = 'joelblog-sorce-v0.0.2';
 
 // 保存到本地cache的文件路径
-const filesToCache = [
-	'/',
-	'/index.html',
-	'/css/m.min.css',
-	'/js/index.js',
-	'/img/webper.png',
-	'/img/180x180.png',
-	'/img/192x192.png',
-	'/img/512x512.png'
-];
+const filesToCache = ['/', '/index.html', '/css/xx.css', '/js/xx.js', ...];
 
 // 安装
 self.addEventListener('install', function(e) {
@@ -239,10 +243,42 @@ self.addEventListener('install', function(e) {
 		})
 	);
 });
+```
 
+</div>
+
+:::
+
+:::note
+<p style="text-shadow: none; color: black">首先我们在 install 的监听函数中，利用Caches api 把定义好的资源列表缓存起来，完成安装以后，Service进入激活状态。</p>
+:::
+
+<slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
+:::header
+### Service Worker - 拦截代理
+:::
+
+:::column
+#### 在安装过程中缓存资源
+```mermaid
+graph LR
+	UA --> fetch
+	fetch --> UA
+	fetch --> id1{match request}
+	id1{match request} --> fetch
+	id1{match request} -- Y --> Caches
+	id1{match request} -- N --> Response
+```
+
+---
+
+<div style="height: 800px; overflow: auto;">
+
+```js
 // 拦截请求
 self.addEventListener('fetch', function(e) {
 	console.log('[Service Worker] Fetch', e.request.url);
+
 	e.respondWith(
 		caches.match(e.request).then((response) => {
 			return response || fetch(e.request);
@@ -251,9 +287,25 @@ self.addEventListener('fetch', function(e) {
 });
 ```
 
+</div>
+
 :::
 
 :::note
-<p style="text-shadow: none; color: black">可以看到, 我们在 install 的监听函数中，利用caches api 缓存资源列表. 接下来当用户再次访问时，fetch 事件会拦截当前页面请求, 如果cache能匹配上当前路径，会优先返回缓存内容，如果没匹配上会从服务拉取数据</p>
-:::
+<p style="text-shadow: none; color: black">当用户再次访问页面时，fetch 事件会拦截请求，只要匹配到缓存的key，优先返回缓存的内容，如果没有会拉取服务端数据返回</p>
 
+<p style="text-shadow: none; color: black">目前demo本地存储管理，使用的是caches api</p>
+
+<p style="text-shadow: none; color: black">Cache API 是为资源请求与响应的存储量身定做的，它采用了键值对的数据模型存储格式，以请求对象为键、响应对象为值，正好对应了发起网络资源请求时请求与响应一一对应的关系。因此 Cache API 适用于请求响应的本地存储。</p>
+
+<p style="text-shadow: none; color: black">IndexedDB 则是一种非关系型（NoSQL）数据库，它的存储对象主要是数据，比如数字、字符串、Plain Objects、Array 等，以及少量特殊对象比如 Date、RegExp、Map、Set 等等，对于 Request、Response 这些是无法直接被 IndexedDB 存储的。</p>
+
+<p style="text-shadow: none; color: black">缓存策略</p>
+<ul style="text-shadow: none; color: black">
+	<li>NetworkFirst：网络优先</li>
+	<li>CacheFirst：缓存优先</li>
+	<li>NetworkOnly：仅使用正常的网络请求</li>
+	<li>CacheOnly：仅使用缓存中的资源</li>
+	<li>StaleWhileRevalidate：从缓存中读取资源的同时发送网络请求更新本地缓存</li>
+</ul>
+:::

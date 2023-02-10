@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodeppt serve ./source/slide.md",
+    "start": "nodeppt serve ./source/index.md",
     "demo": "nodeppt serve ./nodeppt/site/index.md",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "nodeppt build ./source/index.md & cp -r -f dist/ ./ "
