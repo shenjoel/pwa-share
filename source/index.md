@@ -15,16 +15,21 @@ by Congyu Shen
 :::
 :::note
 <p style="text-shadow: none; color: black">1、为什么会出现 PWA</p>
-<p style="text-shadow: none; color: black">1.1、回顾一下历史，在 2015 年之前的那段时间，作为前端开发人员，我们主要精力花在哪里，对于我来说，移动站点的性能优化是投入精力很大的一部分，例如提升首屏速度，动画的流畅度，经过一段时间的优化，性能确实有不小的提升，但是无论怎么优化，还是比 Native App 要差很多，始终无法突破移动设备上 WebView 给 Web 的枷锁，这就是我们想说的第一个问题，Web 的用户体验。</p>
+<p style="text-shadow: none; color: black">1.1、回顾一下历史，在 2015 年之前的那段时间，作为前端开发人员，我们主要精力花在哪里，对于我来说，移动站点的性能优化是投入精力很大的一部分，例如提升首屏速度，动画的流畅度，经过一段时间的优化，性能确实有不小的提升，但是不管怎么优化，还是比 Native App 要的体验差很多，始终无法突破移动设备上 WebView 给 Web 的枷锁，这就是我们想说的第一个问题，Web 的用户体验。</p>
 <p style="text-shadow: none; color: black">1.2、除开用户体验问题之外，还有一个非常重要的问题，那就是用户留存。Native App 安装完毕后会在用户手机桌面上有一个入口，让用户打开 App 只需一次点击，而 Web App 在移动时代最主要的入口还是搜索引擎，用户从浏览器到站点需要经过搜索引擎，如果想访问上次同样的内容甚至还需要记住上次的搜索词，用户也可以记住 URL 并进行输入，但这些对于移动用户来说，无疑成本巨大，这就导致 Web 站点和用户之间的粘性非常脆弱。Native App 还能够通过发送通知让用户再次回到应用中来，而 Web 没有这个能力。</p>
 <p style="text-shadow: none; color: black">1.3、Device API 的不完善。Android 和 iOS 提供了非常丰富的设备 API，Native App 只需获取用户授权就可以使用，而在 Web App 中，WebView 没有提供这样的 API，完全没法使用，如果我们开发一个需要使用 NFC 的 App，你一定不会考虑 Web，因为近场通信 API 在 Web 中还没有。虽然在近年来，W3C 已经提出了很多新的标准，但是浏览器对于 Device API 的支持仍然很不完善。</p>
 <p style="text-shadow: none; color: black">2、在开始之前，我们先来看看一个效果视频</p>
 :::
 
+<slide class="bg-black-blue aligncenter" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
+:::{.content-right}
+<video id="localImportVideo" playsinline="" controls="" disablepictureinpicture="" muted src="https://cdn-files.myshoplinestg.com/video/store/4200012610/1625907878655/show-pwa.mp4?w=800&amp;h=1280&amp;d=32.833333" width="100%" height="800" preload="auto"></video>
+:::
 
 <slide class="bg-black-blue aligncenter" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
 !![](./img/webVSna_uv.png)
-Web站点每个月的UV是Native App的`3 倍`，然而用户在Native App花费的时间却是Web的`20 倍`{.text-intro}
+ #### Web站点每个月的UV是Native App的`3 倍`，然而用户在Native App花费的时间却是Web的`20 倍`{.text-intro}
+
 :::note
 <p style="text-shadow: none; color: black">Google 在一篇名为《Why Build Progressive Web Apps》的文章中披露过这样的一组数据，Web 站点每个月的 UV 是 Native App 的 3 倍，然而用户在 Native App 花费的时间却是 Web 的 20 倍，如下图所示，这之间巨大的反差，和上面所说的三个原因息息相关。</p>
 :::
@@ -140,6 +145,19 @@ Web站点每个月的UV是Native App的`3 倍`，然而用户在Native App花费
 <p style="text-shadow: none; color: black">不同的系统和浏览器的兼容情况也是大不相同，移动端Android Chrome的支持是最完整的，在桌面端Chrome和Edge也是支持比较好的，当然在移动端的体验是最好，甚至提供了与原生APP一至的在，打开应用时的入场动效，单独的浏览容器，那我们来看下实际的交互场景是怎样的（转Demo）</p>
 :::
 
+<slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
+:::{.content-right}
+
+##### PWA其中一个令人着迷的能力就是离线（offline）可用，离线只是它的一种功能表现而已，具体说来，它可以：
+---
+
+* 让我们的Web App在无网（offline）情况下可以访问，甚至使用部分功能，而不是展示“无网络连接”的错误页； {.animated.fadeInUp}
+* 让我们在弱网的情况下，能使用缓存快速访问我们的应用，提升体验；{.animated.fadeInUp.delay-400}
+* 在正常的网络情况下，也可以通过各种自发控制的缓存方式来节省部分请求带宽； {.animated.fadeInUp.delay-800}
+
+:::{.build}
+###### `而这一切，其实都要归功于PWA背后的英雄 —— Service Worker。`
+:::
 
 <slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
 :::header
@@ -167,7 +185,7 @@ graph TD
 :::note
 <p style="text-shadow: none; color: black">Service Worker 是浏览器和网络之间的虚拟代理</p>
 
-<p style="text-shadow: none; color: black">不同于页面主线程，独立运行在另一个工作线程上，它无权访问 DOM 结构</p>
+<p style="text-shadow: none; color: black">不同于页面主线程，独立运行在后台的另一个工作线程上</p>
 
 <p style="text-shadow: none; color: black">早在 2014 年 5 月 W3C 就提出了 Service Worker 草案，用来进行 Web 资源和请求的持久离线缓存。Service Worker 的来历可以从两个方面来介绍。</p>
 :::
@@ -362,27 +380,153 @@ self.addEventListener('fetch', function(e) {
 
 :::note
 <p style="text-shadow: none; color: black">首先是比较常用的网络优先，这种方式能以最新的资源展示页面，但在网络请求失败的情况下也能读取缓存，另一个则是相反，优先读取缓存内容，这里的优势就是速度够快，省去了请求等待时间，没有否发起资源请求。</p>
-<p style="text-shadow: none; color: black">其实就是单一的读取方案，要么是请求数据，要么是缓存中的数据，2选1</p>
+<p style="text-shadow: none; color: black">其次就是单一的读取方案，要么是请求数据，要么是缓存中的数据，2选1</p>
 <p style="text-shadow: none; color: black">最后一个也比较有代表性的存储策略，从缓存中读取资源的同时发送网络请求更新本地缓存，即保证以最快的速度返回内容进行渲染，同时在线程中进行资源更新，优点是快，不足的在于如果资源进行了更新，当次访问只会进行缓存，等下次访问才会是最新的内容。</p>
-<p style="text-shadow: none; color: black">到这里 service worker 介绍得差不多，我们试下怎么查看 service worker (进行demo展示)</p>
+<p style="text-shadow: none; color: black">到这里 service worker 介绍得差不多，我们来展示一下效果</p>
 
+<p style="text-shadow: none; color: black">由于其在后台独立运行的特性，它不会阻塞浏览器脚本的运行，同时也无法直接访问浏览器相关的API（例如：DOM、localStorage等）。此外，即使在离开你的Web App，甚至是关闭浏览器后，它仍然可以运行。就像是一个在Web应用背后默默工作的勤劳小蜜蜂，所以除了可以处理缓存之外，还能推送、通知消息。</p>
 :::
 
 <slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
 :::{.content-right}
 ## Web Push
-- 网络推送
-- 网络通知
+- 推送消息（Push）{.animated.fadeInUp.delay-400}
+- 展示提醒（Notification）{.animated.fadeInUp.delay-800}
 :::
 
 :::note
 <p style="text-shadow: none; color: black">在 iOS 和 Android 移动设备中，Native App 向用户推送通知是很常见的行为，这是重新吸引用户访问应用最有效方法之一。然而推送通知一直被认为是 Web App 缺少的能力</p>
+:::
 
-<p style="text-shadow: none; color: black">这里我们直接来展示效果</p>
+<slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
+:::header
+### Web Push
+:::
+
+:::div {.text-cols}
+##### 角色
+```{.animated.fadeInUp.delay-400}
+    +-------+           +--------------+       +-------------+
+    |  UA   |           | Push Service |       | Application |
+    +-------+           +--------------+       |   Server    |
+                                               +-------------+
+```
+
+---
+
+##### 在Push中登场的三个重要“角色”分别是：
+* 浏览器{.animated.fadeInRight}
+* Push Service：专门的Push服务，你可以认为是一个第三方服务，目前chrome与firefox都有自己的Push Service Service。理论上只要浏览器支持，可以使用任意的Push Service{.animated.fadeInRight.delay-400}
+* 后端服务：这里就是指我们自己的后端服务{.animated.fadeInRight.delay-600}
+
+:::
+
+<slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
+:::header
+### Web Push
+:::
+
+:::div {.text-cols}
+##### 消息推送流程
+```{.animated.fadeInUp.delay-400}
+    +-------+           +--------------+       +-------------+
+    |  UA   |           | Push Service |       | Application |
+    +-------+           +--------------+       |   Server    |
+        |                      |               +-------------+
+        |      Subscribe       |                      |
+        |--------------------->|                      |
+        |       Monitor        |                      |
+        |<====================>|                      |
+        |                      |                      |
+        |          Distribute Push Resource           |
+        |-------------------------------------------->|
+        |                      |                      |
+```
+---
+
+##### subscribe，首先是订阅：
+* Ask Permission：这一步不再上图的流程中，这其实是浏览器中的策略。浏览器会询问用户是否允许通知，只有在用户允许后，才能进行后面的操作{.animated.fadeInRight}
+* Subscribe：浏览器（客户端）需要向Push Service发起订阅（subscribe），订阅后会得到一个PushSubscription对象{.animated.fadeInRight.delay-400}
+* Monitor：订阅操作会和Push Service进行通信，生成相应的订阅信息，Push Service会维护相应信息，并基于此保持与客户端的联系{.animated.fadeInRight.delay-500}
+* Distribute Push Resource：浏览器订阅完成后，会获取订阅的相关信息（存在于PushSubscription对象中），我们需要将这些信息发送到自己的服务端，在服务端进行保存{.animated.fadeInRight.delay-600}
+
+:::
+
+:::note
+<p style="text-shadow: none; color: black">该时序图是Web Push的的第一个步骤，我们可以将其称为订阅（subscribe）</p>
+:::
+
+<slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
+:::header
+### Web Push
+:::
+
+:::div {.text-cols}
+##### 消息推送流程
+```{.animated.fadeInUp.delay-400}
+    +-------+           +--------------+       +-------------+
+    |  UA   |           | Push Service |       | Application |
+    +-------+           +--------------+       |   Server    |
+        |                      |               +-------------+
+        |      Subscribe       |                      |
+        |--------------------->|                      |
+        |       Monitor        |                      |
+        |<====================>|                      |
+        |                      |                      |
+        |          Distribute Push Resource           |
+        |-------------------------------------------->|
+        |                      |                      |
+        :                      :                      :
+        |                      |     Push Message     |
+        |    Push Message      |<---------------------|
+        |<---------------------|                      |
+        |                      |                      |
+```
+
+##### Push Message，然后是推送：
+
+* Push Message阶段一：我们的服务端需要推送消息时，不直接和客户端交互，而是通过Web Push协议，将相关信息通知Push Service {.animated.fadeInRight}
+* Push Message阶段二：Push Service收到消息，通过校验后，基于其维护的客户端信息，将消息推送给订阅了的客户端 {.animated.fadeInRight.delay-400}
+* 最后，客户端收到消息，完成整个推送过程 {.animated.fadeInRight.delay-500}
+:::
+
+:::note
+<p style="text-shadow: none; color: black">其次就是推送（push）</p>
+
+<p style="text-shadow: none; color: black">在上面的Push流程中，出现了一个比较少接触到的角色：Push Service。</p>
+
+<p style="text-shadow: none; color: black">Push Service可以接收网络请求，校验该请求并将其推送给合适的浏览器客户端。Push Service还有一个非常重要的功能：当用户离线时，可以帮我们保存消息队列，直到用户联网后再发送给他们。</p>
+
+<p style="text-shadow: none; color: black">目前，不同的浏览器厂商使用了不同的Push Service。例如，chrome使用了google自家的FCM（前身为GCM），firefox也是使用自家的服务。那么我们是否需要写不同的代码来兼容不同的浏览器所使用的服务呢？答案是并不用。Push Service遵循Web Push Protocol，其规定了请求及其处理的各种细节，这就保证了，不同的Push Service也会具有标准的调用方式。</p>
+
+<p style="text-shadow: none; color: black">------------</p>
+
+<p style="text-shadow: none; color: black">这里再提一点：我们在上一节中说了Push的标准流程，其中第一步就是浏览器发起订阅，生成一个PushSubscription对。Push Service会为每个发起订阅的浏览器生成一个唯一的URL，这样，我们在服务端推送消息时，向这个URL进行推送后，Push Service就会知道要通知哪个浏览器。而这个URL信息也在PushSubscription对象里，叫做endpoint。</p>
+
+<p style="text-shadow: none; color: black"> 如何保证Push的安全性</p>
+
+<p style="text-shadow: none; color: black"> 在Web Push中，为了保证客户端只会收到其订阅的服务端推送的消息（其他的服务端即使在拿到endpoint也无法推送消息），需要对推送信息进行数字签名。该过程大致如下：</p>
+
+<p style="text-shadow: none; color: black"> 在Web Push中会有一对公钥与私钥。客户端持有公钥，而服务端持有私钥。客户端在订阅时，会将公钥发送给Push Service，而Push Service会将该公钥与相应的endpoint维护起来。而当服务端要推送消息时，会使用私钥对发送的数据进行数字签名，并根据数字签名生成一个叫】Authorization请求头。Push Service收到请求后，根据endpoint取到公钥，对数字签名解密验证，如果信息相符则表明该请求是通过对应的私钥加密而成，也表明该请求来自浏览器所订阅的服务端。反之亦然。</p>
+
+:::
+
+<slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
+:::{.content-right}
+> “PWA不是某一项技术，或者某一个新的产物；而是一系列Web技术与标准的集合与应用。通过应用这些新的技术与标准，可以从安全、性能和体验三个方面，优化我们的Web App。所以，其实PWA本质上依然是一个Web App。” 
+> ==总结==
+:::
+
+:::note
+<p style="text-shadow: none; color: black">回过头我们总结一下，什么是PWA？我们需要理解的是，PWA不是某一项技术，或者某一个新的产物；而是一系列Web技术与标准的集合与应用。通过应用这些新的技术与标准，可以从安全、性能和体验三个方面，优化我们的Web App。所以，其实PWA本质上依然是一个Web App。</p>
 :::
 
 <slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
 :::{.content-right}
 > “That's all for today, thanks for listening!”
 > ==by Congyu Shen==
+:::
+
+:::note
+<p style="text-shadow: none; color: black">------------</p>
 :::
