@@ -18,7 +18,7 @@ by Congyu Shen
 <p style="text-shadow: none; color: black">1.1、回顾一下历史，在 2015 年之前的那段时间，作为前端开发人员，我们主要精力花在哪里，对于我来说，移动站点的性能优化是投入精力很大的一部分，例如提升首屏速度，动画的流畅度，经过一段时间的优化，性能确实有不小的提升，但是无论怎么优化，还是比 Native App 要差很多，始终无法突破移动设备上 WebView 给 Web 的枷锁，这就是我们想说的第一个问题，Web 的用户体验。</p>
 <p style="text-shadow: none; color: black">1.2、除开用户体验问题之外，还有一个非常重要的问题，那就是用户留存。Native App 安装完毕后会在用户手机桌面上有一个入口，让用户打开 App 只需一次点击，而 Web App 在移动时代最主要的入口还是搜索引擎，用户从浏览器到站点需要经过搜索引擎，如果想访问上次同样的内容甚至还需要记住上次的搜索词，用户也可以记住 URL 并进行输入，但这些对于移动用户来说，无疑成本巨大，这就导致 Web 站点和用户之间的粘性非常脆弱。Native App 还能够通过发送通知让用户再次回到应用中来，而 Web 没有这个能力。</p>
 <p style="text-shadow: none; color: black">1.3、Device API 的不完善。Android 和 iOS 提供了非常丰富的设备 API，Native App 只需获取用户授权就可以使用，而在 Web App 中，WebView 没有提供这样的 API，完全没法使用，如果我们开发一个需要使用 NFC 的 App，你一定不会考虑 Web，因为近场通信 API 在 Web 中还没有。虽然在近年来，W3C 已经提出了很多新的标准，但是浏览器对于 Device API 的支持仍然很不完善。</p>
-<p style="text-shadow: none; color: black">2、在开始之前，我们先来看看一个例子</p>
+<p style="text-shadow: none; color: black">2、在开始之前，我们先来看看一个效果视频</p>
 :::
 
 
@@ -72,24 +72,52 @@ Web站点每个月的UV是Native App的`3 倍`，然而用户在Native App花费
   ...
 }
 ```
+`<link rel="manifest" href="./manifest.json" />`
 {.build.moveIn}
 :::
 :::note
-<p style="text-shadow: none; color: black">添加到主屏幕是现代浏览器中的一项功能，使开发人员可以轻松便捷地将自己喜欢的网络站点的快捷方式添加到主屏幕中，用户随后可以通过单击访问它。而刚才提到的 Web App Manifest，是一份web app的清单，用来配置添加主屏的入口文件，存放在要目录当中。</p>
+<p style="text-shadow: none; color: black">添加到主屏幕是现代浏览器中的一项功能，在chrome（等一些现代浏览器）中，你可以将访问的网站添加到桌面，这样就会在桌面生成一个类似“快捷方式”的图标，当你点击该图标时，便可以快速访问网站（Web App）。而刚才提到的 Web App Manifest，是一份web app的清单，用来配置添加主屏的入口文件，存放在资源要目录中。</p>
 :::
 
 
 <slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
 :::header
 ### 添加到主屏幕 - 安装
-`<link rel="manifest" href="./manifest.json" />`
-:::
-!![](./img/a2hs-install.png .size-70.alignleft)
-!![](./img/a2hs-install-modal.png .size-20.alignright)
-:::note
-<p style="text-shadow: none; color: black">配置好之后在主文档中引入文件，在浏览器地址栏会出现小图标，或是菜单项里会有安装选项，点击之后会有一个安装提示，确认后主屏幕上会新增一个配置好的图标，也是当前web app的入口，实际的开发中自己去实现安装的UI，通过API去完成安装，那么到这里主屏添加的功能就已经实现了。</p>
 :::
 
+:::gallery-overlay{..bg-light}
+!![](./img/a2hs-install-01.jpeg .size-90)
+## 
+---
+!![](./img/a2hs-install-02.jpeg .size-90)
+## 
+
+---
+!![](./img/a2hs-install-03.jpeg .size-90)
+## 
+
+---
+!![](./img/a2hs-install-04.jpeg .size-90)
+## 
+:::
+
+:::note
+<p style="text-shadow: none; color: black">配置好之后，我们可以通过设置添加到主屏安装选项，点击之后会有一个安装提示，确认后主屏幕上会新增一个快捷方式，也是当前web app的入口，实际的开发中自己去实现安装的UI，都是可以自定画的，那么到这里主屏添加的功能就已经实现了。点击当前这个快捷入口，它会像原生app一样在独立的容器打开，有一个丝滑的入场动效，并且打之后界面几乎和原生应用一样，对于web站点来说，这算是一个跨越性的尝试</p>
+:::
+
+
+<slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
+:::{.content-right}
+### 添加到主屏幕 - 特点
+- Web App可以被添加到桌面并有它自己的应用图标；
+- 从桌面开启时，会和原生app一样有它自己的“开屏图”；
+- 更进一步的，这个Web App“外套”几乎和原生应用一样，没有浏览器的地址栏、工具条，和Native App一样运行在一个独立的容器中。
+{.build.moveIn}
+:::
+
+:::note
+<p style="text-shadow: none; color: black"></p>
+:::
 
 <slide class="bg-black-blue" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
 :::header
